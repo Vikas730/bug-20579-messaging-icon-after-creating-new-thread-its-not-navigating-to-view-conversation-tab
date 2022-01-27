@@ -1,0 +1,44 @@
+<div class="card">
+  <div class="viewToggle" *ngIf="listData.length||pinnedData.length">
+    <div class="viewToggleInner">
+      <!-- <span class="toggleHeading">Task Conversation Console List</span> -->
+      <label class="switch">
+        <input type="checkbox" class="primary" [ngModel]="!defaultToggleView" (click)="toggleListView()">
+        <span class="slider roundtogl" [class.bg-toggle-color]="!defaultToggleView"></span>
+      </label>
+      {{defaultToggleView ? 'Show Full Detail' : 'Hide Full Detail'}}
+    </div>
+  </div>
+  <div class="card-body" [class.fromChatBoard]="fromChatBoard" [class.no-record-card-body]="!listData.length" infiniteScroll [infiniteScrollDistance]="0.5"
+    [infiniteScrollThrottle]="50" (scrolled)="onloadMoreChange($event)" [scrollWindow]="false">
+
+    <div class="card-list" *ngFor="let item of pinnedData; let first = first;"
+      (click)="onCardClick($event, item, 'list')">
+      <app-task-conversation-card [taskData]="item" [isPinningEnabled]="isPinningEnabled" [isPinned]="true"
+        (favUpdated)="onfavUpdatedChange($event)" (pinAction)="onPinAction($event)" [activeId]="activeId" [consoleType]="consoleType"
+        [showFullDetail]="defaultToggleView"
+      ></app-task-conversation-card>
+    </div>
+    <!--This is for Case message list content-->
+    <div #divClick class="card-list" *ngFor="let item of listData; let first = first;"
+      (click)="onCardClick($event, item, 'list')">
+      <app-task-conversation-card [taskData]="item" [enableGC3Tabs]="enableGC3Tabs" [isPinned]="false" [isPinningEnabled]="isPinningEnabled"
+        (favUpdated)="onfavUpdatedChange($event)" [activeId]="activeId" (pinAction)="onPinAction($event)" [consoleType]="consoleType"
+        [showFullDetail]="defaultToggleView"
+      ></app-task-conversation-card>
+    </div>
+
+    <div class="load-more-div text-center"
+      *ngIf="(selectedTab == 'alltask') && appliedFilter && (totalRecordsAvailable < 7) && (totalRecordsAvailable < totalRecordCount)">
+      <button class="btn  btn-primary" (click)="onloadMoreChange($event)">Load More</button>
+    </div>
+
+    <!--This is for display err message-->
+    <div *ngIf="!listData.length && !pinnedData.length && errorMessage" class="card-list no-record-found">
+      <div class="console-msg pading-btm text-center">
+        <h5>No conversation found</h5>
+      </div>
+    </div>
+
+  </div>
+</div>
